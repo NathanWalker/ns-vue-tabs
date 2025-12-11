@@ -7,7 +7,7 @@ https://github.com/user-attachments/assets/eb5f500d-3d11-4335-8249-4a7711dfecca
 ## Try it
 
 ```
-ns debug ios
+npm run ios
 ```
 
 ## Notes

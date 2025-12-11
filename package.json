@@ -6,15 +6,25 @@
   "dependencies": {
     "@nativescript/core": "~9.0.7",
     "@nstudio/nativescript-shimmer": "^1.0.7",
+    "@valor/nativescript-websockets": "^2.0.2",
     "nativescript-vue": "3.0.2"
   },
   "devDependencies": {
     "@nativescript/ios": "9.0.1",
-    "@nativescript/tailwind": "~4.0.3",
+    "@nativescript/tailwind": "~4.0.6",
     "@nativescript/types": "~9.0.0",
+    "@nativescript/vite": "^1.0.4",
     "@nativescript/webpack": "~5.0.28",
     "@types/node": "~22.14.0",
+    "concurrently": "^9.0.0",
+    "patch-package": "^8.0.1",
     "tailwindcss": "^4.1.3",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "wait-on": "^9.0.0"
+  },
+  "scripts": {
+    "ios": "ns debug ios --no-hmr",
+    "android": "ns debug android --no-hmr",
+    "postinstall": "patch-package"
   }
 }
