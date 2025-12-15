@@ -29,7 +29,6 @@ const hmrHandler = (payload: any) => {
   tabCustomizer.resetAccessory(payload);
 };
 
-onHmrUpdate(hmrHandler, "tab-customize");
 
 class TabCustomizer {
   tabView: TabView | null = null;
@@ -91,7 +90,7 @@ class TabCustomizer {
     this.shimmerView.row = 0;
     this.shimmerView.col = 1;
     this.titleLabel = new Label();
-    this.titleLabel.text = "Designing Liquid Glass bam...";
+    this.titleLabel.text = "Designing Liquid Glass accessory...";
     this.titleLabel.color = new Color("#fff");
     this.titleLabel.fontSize = 12;
     this.titleLabel.textAlignment = "left";
@@ -138,7 +137,9 @@ class TabCustomizer {
     if (this.isAccessoryAttached) {
       this.isAccessoryAttached = false;
     }
-    console.log('payload.changedIds:', payload.changedIds)
+    if (payload?.changedIds) {
+      console.log("payload.changedIds:", payload.changedIds);
+    }
     // if (!payload.changedIds.some((id) => id.includes("tab-customize"))) return;
     Shimmer.stop(this.shimmerView!);
     // @ts-ignore
@@ -156,18 +157,72 @@ class TabCustomizer {
   }
 }
 
-// Keep a stable singleton for runtime references, but make it HMR-updatable by
-// swapping its prototype on module re-evaluation.
-const existing = (global as any).tabCustomizer as TabCustomizer | undefined;
-console.log('typeof existing:', typeof existing);
+// Keep a stable singleton for runtime references, but make it HMR-updatable.
+// Primary mechanism: `import.meta.hot.data` (Vite-style).
+// Fallback: globalThis (in case hot isn't attached for some reason).
+type TabCustomizeHmrData = {
+  tabCustomizer?: TabCustomizer;
+  __tabCustomizeLoads?: number;
+};
+
+type NsHot = {
+  data: TabCustomizeHmrData;
+  accept: (cb?: (mod: any) => void) => void;
+  dispose: (cb: (data: TabCustomizeHmrData) => void) => void;
+};
+
+const hot = (import.meta as any).hot as NsHot | undefined;
+const metaUrl = (import.meta as any).url;
+
+try {
+  console.log(
+    "[tab-customize] eval",
+    JSON.stringify({ metaUrl, hasHot: !!hot, hasData: !!hot?.data })
+  );
+} catch {}
+
+if (hot) {
+  hot.data.__tabCustomizeLoads = (hot.data.__tabCustomizeLoads ?? 0) + 1;
+  try {
+    console.log(
+      "[tab-customize] hot.data",
+      JSON.stringify({ loads: hot.data.__tabCustomizeLoads })
+    );
+  } catch {}
+}
+
+const existing = hot?.data?.tabCustomizer;
 if (existing) {
+  try {
+    console.log("[tab-customize] reuse existing instance");
+  } catch {}
+  // Update behavior for the existing instance.
   try {
     Object.setPrototypeOf(existing as any, TabCustomizer.prototype);
   } catch {}
-} else {
-  (global as any).tabCustomizer = new TabCustomizer();
 }
-export const tabCustomizer = (global as any).tabCustomizer as TabCustomizer;
+
+const g = globalThis as any;
+export const tabCustomizer: TabCustomizer =
+  existing ?? g.__TAB_CUSTOMIZER__ ?? new TabCustomizer();
+
+if (hot) {
+  hot.data.tabCustomizer = tabCustomizer;
+  try {
+    console.log(
+      "[tab-customize] stored into hot.data",
+      JSON.stringify({ same: existing === tabCustomizer })
+    );
+  } catch {}
+  hot.accept();
+  hot.dispose((data) => {
+    data.tabCustomizer = tabCustomizer;
+  });
+} else {
+  g.__TAB_CUSTOMIZER__ = tabCustomizer;
+}
+
+onHmrUpdate(hmrHandler, "tab-customize");
 
 function useSwiftAccessory(tabView: TabView) {
   const accessory = new TabsAccessory();

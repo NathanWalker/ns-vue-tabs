@@ -13,7 +13,7 @@ npm run ios
 ## Notes
 
 For clarity and thoroughness, this shows 2 ways to handle accessory views.
-Use NativeScript via TypeScript directly or use Swift. Choice is yours.
+Use NativeScript directly or use Swift.
 
 - NativeScript creation: https://github.com/NathanWalker/ns-vue-tabs/blob/2147d63b91bf31c920d82804fc42ec53c0fc7278/src/components/tab-customize.ts#L49
 - Swift creation: https://github.com/NathanWalker/ns-vue-tabs/blob/main/App_Resources/iOS/src/Tabs.swift
