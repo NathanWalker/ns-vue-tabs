@@ -1,0 +1,50 @@
+diff --git a/node_modules/@nativescript/core/ui/list-view/index.ios.js b/node_modules/@nativescript/core/ui/list-view/index.ios.js
+index f7119a4..76b6977 100644
+--- a/node_modules/@nativescript/core/ui/list-view/index.ios.js
++++ b/node_modules/@nativescript/core/ui/list-view/index.ios.js
+@@ -242,6 +242,22 @@ var UITableViewDelegateImpl = (function (_super) {
+         }
+         return height;
+     };
++    UITableViewDelegateImpl.prototype.scrollViewDidScroll = function (
++        scrollView
++    ) {
++        const offsetY = scrollView.contentOffset.y;
++        var _a;
++        var owner =
++            (_a = this._owner) === null || _a === void 0 ? void 0 : _a.deref();
++        if (!owner) {
++            return 0;
++        }
++         owner.notify({
++            eventName: 'scrollChange',
++            object: owner,
++            value: offsetY
++        });
++    };
+     UITableViewDelegateImpl.ObjCProtocols = [UITableViewDelegate];
+     return UITableViewDelegateImpl;
+ }(NSObject));
+diff --git a/node_modules/@nativescript/core/ui/tab-view/index.ios.js b/node_modules/@nativescript/core/ui/tab-view/index.ios.js
+index 7c81504..cdfdba5 100644
+--- a/node_modules/@nativescript/core/ui/tab-view/index.ios.js
++++ b/node_modules/@nativescript/core/ui/tab-view/index.ios.js
+@@ -707,13 +707,12 @@ export class TabView extends TabViewBase {
+             return;
+         }
+         const setAccessory = (accessory) => {
+-            try {
+-                this._ios.setBottomAccessoryAnimated(accessory, animated);
+-            }
+-            catch (err) {
+-                // Fallback to property if needed
+                 this._ios.bottomAccessory = accessory;
+-            }
++                if (accessory) {
++                    this._ios.bottomAccessory.contentView.setNeedsDisplay();
++                    this._ios.bottomAccessory.contentView.setNeedsLayout();
++                    this._ios.bottomAccessory.contentView.layoutIfNeeded();
++                }
+         };
+         // Clear previous
+         if (!value) {
