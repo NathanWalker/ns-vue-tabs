@@ -87,7 +87,7 @@ class TabCustomizer {
     this.shimmerView.row = 0;
     this.shimmerView.col = 1;
     this.titleLabel = new Label();
-    this.titleLabel.text = "Designing Liquid Glass bam...";
+    this.titleLabel.text = "Designing Liquid Glass accessory...";
     this.titleLabel.color = new Color("#fff");
     this.titleLabel.fontSize = 12;
     this.titleLabel.textAlignment = "left";
