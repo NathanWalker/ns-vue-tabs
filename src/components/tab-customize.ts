@@ -12,6 +12,20 @@ import {
 import { Shimmer, ShimmerDirection } from "@nstudio/nativescript-shimmer";
 import { onHmrUpdate } from "@nativescript/vite/hmr/shared/runtime/hooks";
 
+/**
+ * CommonJS example explorations
+ * 
+ */
+import chroma from "chroma-js";
+
+const r = chroma("red");
+console.log("r:", r.hex());
+
+import base64url from 'base64-url';
+const base64Text = base64url.encode('Hello World!');  
+console.log("base64url.encode('Hello World!'):", base64Text)
+console.log("base64url.decode(base64Text):", base64url.decode(base64Text));
+
 // nice subtle shimmer effect
 Shimmer.defaults = {
   speed: 2.6,
@@ -87,7 +101,7 @@ class TabCustomizer {
     this.shimmerView.row = 0;
     this.shimmerView.col = 1;
     this.titleLabel = new Label();
-    this.titleLabel.text = "Designing Liquid Glass bam...";
+    this.titleLabel.text = "Designing Liquid Glass accessory...";
     this.titleLabel.color = new Color("#fff");
     this.titleLabel.fontSize = 12;
     this.titleLabel.textAlignment = "left";
@@ -134,7 +148,7 @@ class TabCustomizer {
     if (this.isAccessoryAttached) {
       this.isAccessoryAttached = false;
     }
-    console.log('payload.changedIds:', payload.changedIds)
+    // Note: could isolate this to only when this file changes if wanted
     // if (!payload.changedIds.some((id) => id.includes("tab-customize"))) return;
     Shimmer.stop(this.shimmerView!);
     // @ts-ignore
